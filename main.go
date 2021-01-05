@@ -3,8 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -72,75 +74,56 @@ func delete(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// func createTour(w http.ResponseWriter, r *http.Request) {
-// 	var newTour tour
-// 	// Convert r.Body into a readable formart
-// 	reqBody, err := ioutil.ReadAll(r.Body)
-// 	if err != nil {
-// 		fmt.Fprintf(w, "Kindly enter data with the event id, title and description only in order to update")
-// 	}
+func create(w http.ResponseWriter, r *http.Request) {
+	var newTour tour
 
-// 	json.Unmarshal(reqBody, &newTour)
+	reqBody, err := ioutil.ReadAll(r.Body) // mengubah reqBody kebnetuk byte supaya mudah dibaca
+	if err != nil {
+		fmt.Fprintf(w, "Body is empty")
+	}
+	// mengubah json data byte ke variable struct newtour
+	json.Unmarshal(reqBody, &newTour)
+	// menambahkan data baru ke struk lama
+	tours = append(tours, newTour)
+	// membuat status 201
+	w.WriteHeader(http.StatusCreated)
+	// menampilkan json data baru
+	json.NewEncoder(w).Encode(newTour)
+}
 
-// 	// Add the newly created event to the array of events
-// 	tours = append(tours, newTour)
+func update(w http.ResponseWriter, r *http.Request) {
+	tourID := mux.Vars(r)["id"]
+	var updatedEvent tour
 
-// 	// Return the 201 created status code
-// 	w.WriteHeader(http.StatusCreated)
-// 	// Return the newly created event
-// 	json.NewEncoder(w).Encode(newTour)
-// }
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fmt.Fprintf(w, "Body is empty!")
+	}
+	json.Unmarshal(reqBody, &updatedEvent)
 
-// func getOneEvent(w http.ResponseWriter, r *http.Request) {
-// 	// Get the ID from the url
-// 	eventID := mux.Vars(r)["id"]
-
-// 	// Get the details from an existing event
-// 	// Use the blank identifier to avoid creating a value that will not be used
-// 	for _, singleEvent := range events {
-// 		if singleEvent.ID == eventID {
-// 			json.NewEncoder(w).Encode(singleEvent)
-// 		}
-// 	}
-// }
-
-// func getAllEvents(w http.ResponseWriter, r *http.Request) {
-// 	json.NewEncoder(w).Encode(events)
-// }
-
-// func updateEvent(w http.ResponseWriter, r *http.Request) {
-// 	// Get the ID from the url
-// 	eventID := mux.Vars(r)["id"]
-// 	var updatedEvent event
-// 	// Convert r.Body into a readable formart
-// 	reqBody, err := ioutil.ReadAll(r.Body)
-// 	if err != nil {
-// 		fmt.Fprintf(w, "Kindly enter data with the event title and description only in order to update")
-// 	}
-
-// 	json.Unmarshal(reqBody, &updatedEvent)
-
-// 	for i, singleEvent := range events {
-// 		if singleEvent.ID == eventID {
-// 			singleEvent.Title = updatedEvent.Title
-// 			singleEvent.Description = updatedEvent.Description
-// 			events[i] = singleEvent
-// 			json.NewEncoder(w).Encode(singleEvent)
-// 		}
-// 	}
-// }
+	for i, aTour := range tours {
+		if aTour.ID == tourID {
+			aTour.Title = updatedEvent.Title
+			aTour.Description = updatedEvent.Description
+			aTour.Location = updatedEvent.Location
+			tours = append(tours[:i], aTour)
+			json.NewEncoder(w).Encode(aTour)
+		}
+	}
+}
 
 func main() {
 	/* enable if you want deploy */
-	// port := os.Getenv("PORT")
-	/* enable when localhost */
-	port := "80"
+	port := os.Getenv("PORT")
+	/* enable when running on localhost */
+	// port := "80"
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", home)
 	router.HandleFunc("/tours", getAll).Methods("GET")
 	router.HandleFunc("/tour/{id}", getById).Methods("GET")
 	router.HandleFunc("/tour/{id}", delete).Methods("DELETE")
-	// router.HandleFunc("/event", createEvent).Methods("POST")
-	// router.HandleFunc("/events/{id}", updateEvent).Methods("PATCH")
+	router.HandleFunc("/tour", create).Methods("POST")
+	router.HandleFunc("/tour/{id}", update).Methods("PATCH")
 	log.Fatal(http.ListenAndServe(":"+port, router))
+	log.Println("Web server is running, with port" + port)
 }
