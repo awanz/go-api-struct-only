@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -40,12 +39,37 @@ var tours = allTours{
 	},
 }
 
-func getAllTours(w http.ResponseWriter, r *http.Request) {
+func home(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Welcome to GOAPI!")
+}
+
+func getAll(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(tours)
 }
 
-func homeLink(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to GOAPI!")
+func getById(w http.ResponseWriter, r *http.Request) {
+	// mengambil parameter id dari url
+	tourId := mux.Vars(r)["id"]
+
+	// mengulang semua data struct jika id nya sama struct dijadikan encode json
+	for _, tour := range tours {
+		if tour.ID == tourId {
+			json.NewEncoder(w).Encode(tour)
+		}
+	}
+}
+
+func delete(w http.ResponseWriter, r *http.Request) {
+	// mengambil parameter id dari url
+	tourId := mux.Vars(r)["id"]
+
+	// mengulang semua data struct jika id nya sama struct akan di delete
+	for i, tour := range tours {
+		if tour.ID == tourId {
+			tours = append(tours[:i], tours[i+1:]...)
+			fmt.Fprintf(w, "Tour with id %v has been deleted", tourId)
+		}
+	}
 }
 
 // func createTour(w http.ResponseWriter, r *http.Request) {
@@ -106,31 +130,17 @@ func homeLink(w http.ResponseWriter, r *http.Request) {
 // 	}
 // }
 
-// func deleteEvent(w http.ResponseWriter, r *http.Request) {
-// 	// Get the ID from the url
-// 	eventID := mux.Vars(r)["id"]
-
-// 	// Get the details from an existing event
-// 	// Use the blank identifier to avoid creating a value that will not be used
-// 	for i, singleEvent := range events {
-// 		if singleEvent.ID == eventID {
-// 			events = append(events[:i], events[i+1:]...)
-// 			fmt.Fprintf(w, "The event with ID %v has been deleted successfully", eventID)
-// 		}
-// 	}
-// }
-
 func main() {
 	/* enable if you want deploy */
-	port := os.Getenv("PORT")
+	// port := os.Getenv("PORT")
 	/* enable when localhost */
-	// port := "80"
+	port := "80"
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/", homeLink)
-	router.HandleFunc("/tours", getAllTours).Methods("GET")
+	router.HandleFunc("/", home)
+	router.HandleFunc("/tours", getAll).Methods("GET")
+	router.HandleFunc("/tour/{id}", getById).Methods("GET")
+	router.HandleFunc("/tour/{id}", delete).Methods("DELETE")
 	// router.HandleFunc("/event", createEvent).Methods("POST")
-	// router.HandleFunc("/events/{id}", getOneEvent).Methods("GET")
 	// router.HandleFunc("/events/{id}", updateEvent).Methods("PATCH")
-	// router.HandleFunc("/events/{id}", deleteEvent).Methods("DELETE")
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }
