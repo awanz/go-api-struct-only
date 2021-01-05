@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -121,9 +122,9 @@ func homeLink(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	/* enable if you want deploy */
-	// port := os.Getenv("PORT")
+	port := os.Getenv("PORT")
 	/* enable when localhost */
-	port := "80"
+	// port := "80"
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", homeLink)
 	router.HandleFunc("/tours", getAllTours).Methods("GET")
