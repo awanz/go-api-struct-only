@@ -1,0 +1,121 @@
+{
+	"info": {
+		"_postman_id": "3f44a804-8718-4185-95a3-cb656e0a2037",
+		"name": "Golang JSON Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "POST",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ID\":          \"9\",\r\n    \"Title\":       \"Pantai Pangandaran\",\r\n    \"Description\": \"Pantai Pangandaran pernah dinobatkan oleh AsiaRooms sebagai Pantai terbaik di provinsi Jawa Barat.\",\r\n    \"Location\":    \"Kabupaten Pangandaran, Jawa Barat\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/tour",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"tour"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UPDATE",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Title\":       \"Test Update\",\r\n    \"Description\": \"Ini adalah test update.\",\r\n    \"Location\":    \"Dimana saja\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/tour/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"tour",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/tours",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"tours"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET By ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/tour/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"tour",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/events/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"events",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
