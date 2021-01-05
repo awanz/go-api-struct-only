@@ -46,10 +46,17 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func getAll(w http.ResponseWriter, r *http.Request) {
+	// set header
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "*")
 	json.NewEncoder(w).Encode(tours)
 }
 
 func getById(w http.ResponseWriter, r *http.Request) {
+	// set header
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "*")
+
 	// mengambil parameter id dari url
 	tourId := mux.Vars(r)["id"]
 
@@ -62,6 +69,10 @@ func getById(w http.ResponseWriter, r *http.Request) {
 }
 
 func delete(w http.ResponseWriter, r *http.Request) {
+	// set header
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "*")
+
 	// mengambil parameter id dari url
 	tourId := mux.Vars(r)["id"]
 
@@ -75,6 +86,10 @@ func delete(w http.ResponseWriter, r *http.Request) {
 }
 
 func create(w http.ResponseWriter, r *http.Request) {
+	// set header
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "*")
+
 	var newTour tour
 
 	reqBody, err := ioutil.ReadAll(r.Body) // mengubah reqBody kebnetuk byte supaya mudah dibaca
@@ -92,6 +107,10 @@ func create(w http.ResponseWriter, r *http.Request) {
 }
 
 func update(w http.ResponseWriter, r *http.Request) {
+	// set header
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "*")
+
 	tourID := mux.Vars(r)["id"]
 	var updatedEvent tour
 
